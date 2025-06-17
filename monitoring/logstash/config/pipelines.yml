@@ -1,0 +1,8 @@
+#######################################################
+############## EPSI (2025): MSPR AMAZING ##############
+##############         Version: 1.0        ############
+#######################################################
+
+- pipeline.id: spark
+  path.config: "/usr/share/logstash/pipeline/spark.conf"
+  queue.type: persisted

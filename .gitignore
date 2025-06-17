@@ -1,0 +1,30 @@
+#######################################################
+############## EPSI (2025): MSPR AMAZING ##############
+##############         Version: 1.0        ############
+#######################################################
+
+# Environments
+.vscode
+.DS_Store
+.env
+.venv
+venv
+
+# Folders
+#airflow/config/*
+#airflow/logs/*
+#airflow/plugins/*
+data/processed/*
+data/raw/csv/*
+data/raw/parquet/*
+data/tmp/*
+logs/*
+minio/*
+monitoring/elasticsearch/data/*
+monitoring/grafana/data/*
+monitoring/logstash/data/*
+spark-tmp/*
+#models/*
+#notebooks/*
+#references/*
+#reports/*

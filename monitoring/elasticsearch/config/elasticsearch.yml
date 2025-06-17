@@ -1,0 +1,10 @@
+#######################################################
+############## EPSI (2025): MSPR AMAZING ##############
+##############         Version: 1.0        ############
+#######################################################
+
+cluster.name: "spark-monitoring"
+network.host: 0.0.0.0
+xpack.security.enabled: false
+path.data: /usr/share/elasticsearch/data
+path.logs: /usr/share/elasticsearch/logs
