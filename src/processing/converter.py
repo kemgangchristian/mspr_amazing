@@ -218,7 +218,7 @@ class CsvToParquetConverter:
             self.download_all_datasets()
 
             # 2. Convertir les fichiers csv en parquet
-            # self.convert_directory()
+            self.convert_directory()
 
             logger.info(f"Pipeline de conversion terminé avec succès.")
 

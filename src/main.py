@@ -160,10 +160,10 @@ def main():
         convert_data_pipeline(converter, logger)
 
         # Exécution du pipeline de traitement des données
-        # cleaning_data_pipeline(cleaner, logger)
+        cleaning_data_pipeline(cleaner, logger)
 
         # Exécution du pipeline d'entraînement
-        # train_model_pipeline(segmentation, logger)
+        train_model_pipeline(segmentation, logger)
 
     except Exception as e:
         logger.error(f"💥 Erreur critique: {e}", exc_info=True)
