@@ -4,6 +4,8 @@
 #######################################################
 
 import shutil
+import requests
+import gzip
 from pathlib import Path
 from pyspark.sql import SparkSession
 from src.utils.logger import get_logger
@@ -20,6 +22,19 @@ logger = get_logger(__name__)
 
 
 class CsvToParquetConverter:
+    # Configuration des paths
+    BASE_DATA_URL = "https://data.rees46.com/datasets/marketplace/"
+    # Liste des données
+    DATASET_FILES = [
+        "2019-Oct.csv.gz",
+        "2019-Nov.csv.gz",
+        "2019-Dec.csv.gz",
+        "2020-Jan.csv.gz",
+        "2020-Feb.csv.gz",
+        "2020-Mar.csv.gz",
+        "2020-Apr.csv.gz",
+    ]
+
     def __init__(
         self,
         spark: SparkSession,
@@ -27,8 +42,87 @@ class CsvToParquetConverter:
         input_parquet: str,
     ):
         self.spark = spark
-        self.input_csv = input_csv
-        self.input_parquet = input_parquet
+        self.input_csv = Path(input_csv)
+        self.input_parquet = Path(input_parquet)
+
+        # Création des répertoires si inexistants
+        self.input_csv.mkdir(parents=True, exist_ok=True)
+        self.input_parquet.mkdir(parents=True, exist_ok=True)
+
+    def _get_full_url(self, filename: str) -> str:
+        """Construit l'URL complète à partir du nom de fichier."""
+        return f"{self.BASE_DATA_URL}{filename}"
+
+    def download_and_extract_gz(self, filename: str) -> Path:
+        """
+        Télécharge et décompresse un fichier .gz.
+
+        Args:
+            filename: Nom du fichier à télécharger (avec extension .gz)
+
+        Returns:
+            Path: Chemin du fichier CSV extrait
+        """
+        csv_filename = filename.replace(".gz", "")
+        csv_path = self.input_csv / csv_filename
+        gz_path = self.input_csv / filename
+
+        # Vérification si le fichier CSV existe déjà
+        if csv_path.exists():
+            logger.info(f"Le fichier {csv_filename} existe déjà. Ignoré.")
+            return csv_path
+
+        url = self._get_full_url(filename)
+        logger.info(f"Début du téléchargement: {url}")
+
+        try:
+            # Téléchargement en stream
+            with requests.get(url, stream=True) as response:
+                response.raise_for_status()
+                with open(gz_path, "wb") as f:
+                    for chunk in response.iter_content(chunk_size=8192):
+                        f.write(chunk)
+
+            # Décompression
+            logger.info(f"Décompression de {filename}...")
+            with gzip.open(gz_path, "rb") as gz_file:
+                with open(csv_path, "wb") as csv_file:
+                    shutil.copyfileobj(gz_file, csv_file)
+
+            # Nettoyage
+            gz_path.unlink()
+            logger.info(f"Fichier prêt: {csv_path}")
+            return csv_path
+
+        except requests.exceptions.RequestException as e:
+            logger.error(f"Erreur de téléchargement: {url} | {e}")
+            if gz_path.exists():
+                gz_path.unlink()
+            raise
+        except Exception as e:
+            logger.error(f"Erreur inattendue: {url} | {e}")
+            if gz_path.exists():
+                gz_path.unlink()
+            if csv_path.exists():
+                csv_path.unlink()
+            raise
+
+    def download_all_datasets(self) -> None:
+        """Télécharge tous les jeux de données configurés."""
+        logger.info("Début du téléchargement des datasets")
+
+        downloaded_files = []
+        for filename in self.DATASET_FILES:
+            try:
+                csv_file = self.download_and_extract_gz(filename)
+                downloaded_files.append(csv_file)
+            except Exception as e:
+                logger.error(f"Échec pour {filename}: {str(e)}")
+                continue
+
+        logger.info(
+            f"Téléchargement terminé: {len(downloaded_files)}/{len(self.DATASET_FILES)} fichiers"
+        )
 
     def convert_file(self, csv_path: Path, output_path: Path):
         """Convertit un seul fichier CSV en Parquet (coalesce en un seul fichier)."""
@@ -120,8 +214,11 @@ class CsvToParquetConverter:
         logger.info("Démarrage du pipeline de conversion des fichiers csv en parquet")
 
         try:
-            # 1. Convertir les fichiers csv en parquet
-            self.convert_directory()
+            # 1. Télécharge tous les jeux de données via url
+            self.download_all_datasets()
+
+            # 2. Convertir les fichiers csv en parquet
+            # self.convert_directory()
 
             logger.info(f"Pipeline de conversion terminé avec succès.")
 

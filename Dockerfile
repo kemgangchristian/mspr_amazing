@@ -18,7 +18,8 @@ RUN apt-get update && \
 
 # Étape 3: Installation des dépendances Python
 COPY requirements.txt /tmp/
-RUN pip install --no-cache-dir -r /tmp/requirements.txt && \
+RUN pip install --no-cache-dir "urllib3<2.0.0,>=1.25.4" && \
+    pip install --no-cache-dir -r /tmp/requirements.txt && \
     rm /tmp/requirements.txt
 
 # Étape 4: Téléchargement des JARs requis

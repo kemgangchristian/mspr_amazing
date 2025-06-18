@@ -1,8 +1,45 @@
-minio==7.1.15
-numpy==1.24.4
-polars==0.19.12
-prettytable==3.9.0
-matplotlib==3.7.5
-seaborn==0.13.0
-pyspark==4.0.0
-python-dotenv==1.0.0
+#############################################
+### EPSI MSPR AMAZING - Requirements File ###
+### Version: 1.2 - 2025-06-25           ###
+#############################################
+
+# [CORE] Bibliothèques fondamentales
+requests==2.31.0          # Bibliothèque HTTP simplifiée pour les requêtes API/Web
+certifi==2023.11.17       # Certificats SSL root pour les connexions sécurisées
+urllib3<2.0.0,>=1.25.4    # Client HTTP bas niveau avec gestion de pool de connexions
+
+
+# [DATA PROCESSING] Traitement des données
+pyspark==4.0.0            # Framework de traitement distribué (nécessite Java 17+)
+pyarrow==14.0.1           # Format columnar pour échange Spark-Pandas-Polars
+polars==0.19.12           # Dataframe ultra-rapide (alternative à Pandas)
+numpy==1.24.4             # Calcul numérique pour opérations vectorisées
+
+# [STORAGE] Gestion du stockage objet
+minio==7.1.15             # Client Python pour MinIO (S3 compatible)
+fsspec==2023.10.0         # Abstraction système de fichiers pour stockage cloud
+s3fs==2023.10.0           # Implémentation S3 pour fsspec (accès style fichiers)
+botocore==1.31.16         # Version spécifique compatible
+
+# [VISUALIZATION] Visualisation des données
+matplotlib==3.7.5         # Bibliothèque de visualisation 2D/3D de base
+seaborn==0.13.0           # Visualisation statistique haut-niveau (basé sur matplotlib)
+prettytable==3.9.0        # Affichage tabulaire propre en console
+
+# [UTILS] Utilitaires divers
+python-dotenv==1.0.0      # Gestion des variables d'environnement via .env
+typing-extensions==4.8.0  # Support des types Python pour versions antérieures
+
+#############################################
+### NOTES D'INSTALLATION ###
+# 1. Pour PySpark 4.0 : nécessite Java 17+
+#    - Ubuntu/Debian : sudo apt install openjdk-17-jdk
+#    - CentOS/RHEL : sudo yum install java-17-openjdk
+#
+# 2. Configuration MinIO recommandée :
+#    export MINIO_ACCESS_KEY="votre_cle"
+#    export MINIO_SECRET_KEY="votre_secret"
+#
+# 3. Pour installer avec vérification stricte :
+#    pip install -r requirements.txt --no-deps
+#############################################
