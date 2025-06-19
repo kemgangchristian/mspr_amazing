@@ -20,9 +20,9 @@ data/raw/parquet/*
 data/tmp/*
 logs/*
 minio/*
-monitoring/elasticsearch/data/*
-monitoring/grafana/data/*
-monitoring/logstash/data/*
+#monitoring/elasticsearch/data/*
+#monitoring/grafana/data/*
+#monitoring/logstash/data/*
 spark-tmp/*
 #models/*
 #notebooks/*
