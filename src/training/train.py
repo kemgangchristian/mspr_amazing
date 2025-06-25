@@ -359,7 +359,8 @@ class CustomerSegmentation:
         logger.info("Entraînement du modèle de segmentation")
         try:
             start_time = datetime.now()
-            self.n_clusters = self.determine_optimal_clusters(df)
+            k_val = 10  # Range (1 -> 9) pour determiner la valeur de k maximal
+            self.n_clusters = self.determine_optimal_clusters(df, max_k=k_val)
 
             pipeline = Pipeline(
                 stages=[
@@ -416,16 +417,16 @@ class CustomerSegmentation:
         try:
             timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
 
-            # 1. Sauvegarder localement dans un dossier temporaire
-            with tempfile.TemporaryDirectory(dir=self.temp_dir, delete=False) as tmpdir:
+            # Création d'un dossier temporaire automatiquement nettoyé à la sortie du with
+            with tempfile.TemporaryDirectory(dir=self.temp_dir) as tmpdir:
                 local_model_path = f"{tmpdir}/model_{timestamp}"
                 model.save(local_model_path)
                 logger.info(f"Modèle sauvegardé localement dans : {local_model_path}")
 
-                # 2. Compresser le dossier en zip
+                # Création du fichier zip dans tmpdir
                 zip_filename = f"{tmpdir}/model_{timestamp}.zip"
                 with zipfile.ZipFile(zip_filename, "w", zipfile.ZIP_DEFLATED) as zipf:
-                    # Parcourir tous les fichiers du dossier model pour les zipper
+                    # Parcours des fichiers du dossier du modèle pour les zipper
                     for root, dirs, files in os.walk(local_model_path):
                         for file in files:
                             filepath = os.path.join(root, file)
@@ -434,19 +435,13 @@ class CustomerSegmentation:
                             zipf.write(filepath, arcname)
                 logger.info(f"Modèle compressé dans le fichier : {zip_filename}")
 
-                # 3. Upload du zip sur S3 via hadoop fs s3a (si self.s3_client est un client compatible)
+                # Upload du zip vers S3 via ton client S3 (ex : MinIO)
                 s3_path = f"{self.s3_prefix_out}/model_{timestamp}.zip"
-
-                # Exemple avec le client MinIO / s3 compatible utilisé dans ton code (fput_object)
-                self.s3_client.fput_object(
-                    self.s3_bucket,
-                    s3_path,
-                    zip_filename,
-                )
-                os.remove(zip_filename)  # ✅ suppression du fichier zip temporaire
+                self.s3_client.fput_object(self.s3_bucket, s3_path, zip_filename)
                 logger.info(
-                    f"Fichier zip du modèle uploadé vers s3a://{self.s3_bucket}/{s3_path} et suppression du fichier zip temporaire: {zip_filename}"
+                    f"Fichier zip du modèle uploadé vers s3a://{self.s3_bucket}/{s3_path}"
                 )
+                # Pas besoin de suppression manuelle, tmpdir et son contenu seront supprimés automatiquement
 
         except Py4JJavaError as e:
             logger.error(

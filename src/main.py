@@ -4,6 +4,7 @@
 #######################################################
 
 import os
+import gc
 import argparse
 import logging
 from pathlib import Path
@@ -56,6 +57,11 @@ def parse_arguments(config: Config) -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="Pipeline complet du MSPR - AMAZING")
 
     parser.add_argument(
+        "--raw_tmp",
+        default=str(config.TMP_DIR),
+        help="Répertoire des fichiers compressés (.gz)",
+    )
+    parser.add_argument(
         "--input_csv", default=str(config.INPUT_CSV), help="Répertoire des fichiers CSV"
     )
     parser.add_argument(
@@ -95,6 +101,9 @@ def convert_data_pipeline(converter, logger):
     logger.info("Conversion du CSV -> PARQUET")
     converter.run_pipeline_convert()
     logger.info("Conversion terminée")
+    # Libération de la mémoire
+    converter.spark.catalog.clearCache()
+    gc.collect()
 
 
 def cleaning_data_pipeline(cleaner, logger):
@@ -102,6 +111,9 @@ def cleaning_data_pipeline(cleaner, logger):
     logger.info("Début du traitement de données")
     cleaner.run_pipeline_cleaning()
     logger.info("Traitement de données terminée")
+    # Libération de la mémoire
+    cleaner.spark.catalog.clearCache()
+    gc.collect()
 
 
 def train_model_pipeline(segmentation, logger):
@@ -109,12 +121,16 @@ def train_model_pipeline(segmentation, logger):
     logger.info("Début de l'entraînement du modèle")
     segmentation.run_pipeline_model()
     logger.info("Entraînement du modèle terminé")
+    # Libération de la mémoire
+    segmentation.spark.catalog.clearCache()
+    gc.collect()
 
 
 def main():
     config = Config()
     logger = generate_log(config)
     args = parse_arguments(config)
+    raw_tmp = args.raw_tmp
     input_csv = args.input_csv
     input_parquet = args.input_parquet
     output_s3 = args.output_s3
@@ -135,7 +151,7 @@ def main():
         configure_s3_access(spark, logger)
 
         # Initialisation des contructeurs
-        converter = CsvToParquetConverter(spark, input_csv, input_parquet)
+        converter = CsvToParquetConverter(spark, raw_tmp, input_csv, input_parquet)
         cleaner = DataCleaning(
             spark,
             input_parquet,
