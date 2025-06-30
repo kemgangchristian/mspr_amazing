@@ -23,19 +23,26 @@ Il permet également de :
 -   Générer des insights marketing/actionnables
 -   Industrialiser la chaîne complète de traitement et de prédiction
 
+---
+
 ## 🏗️ Architecture Technique
 
 ```mermaid
 graph TD
-    A[Sources de données] --> B{Pipeline Spark}
-    B --> C[(MinIO)]
-    C --> D[Entraînement modèle]
-    D --> E[Modèle K-means]
+    A[Sources de données CSV] --> B{Pipeline Spark ETL}
+    B -->|Nettoyage| B1[Suppression outliers]
+    B -->|Transformation| B2[Calcul RFM]
+    B -->|Anonymisation| B3[SHA-256]
+    B --> C[(Stockage MinIO)]
+    C --> D[Entraînement K-Means]
+    D --> E[Modèle de Clustering]
     E --> F[Dashboard Streamlit]
     C --> F
-    B --> H[ELK]
+    B --> H[(ELK Stack)]
     D --> H
 ```
+
+---
 
 ## 📁 Structure du projet
 
