@@ -25,7 +25,7 @@ Il permet également de :
 
 ## 🏗️ Architecture Technique
 
-````mermaid
+```mermaid
 graph TD
     A[Sources de données] --> B{Pipeline Spark}
     B --> C[(MinIO)]
@@ -35,7 +35,7 @@ graph TD
     C --> F
     B --> H[ELK]
     D --> H
-
+```
 
 ## 📁 Structure du projet
 
@@ -47,7 +47,7 @@ Voir le script `setup_project.sh` pour comprendre l'arborescence du projet.
 
 ```bash
 docker-compose up -d
-````
+```
 
 ---
 
