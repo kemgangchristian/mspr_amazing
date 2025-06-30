@@ -153,6 +153,10 @@ GF_PORT=3000
 -   Prédiction en temps réel
 -   Recommandations marketing ciblées
 
+```bash
+streamlit run app.py
+```
+
 ---
 
 ## 📬 Contact & Informations légales
