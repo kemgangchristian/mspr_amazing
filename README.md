@@ -30,9 +30,6 @@ Il permet également de :
 ```mermaid
 graph TD
     A[Sources de données CSV] --> B{Pipeline Spark ETL}
-    B -->|Nettoyage| B1[Suppression outliers]
-    B -->|Transformation| B2[Calcul RFM]
-    B -->|Anonymisation| B3[SHA-256]
     B --> C[(Stockage MinIO)]
     C --> D[Entraînement K-Means]
     D --> E[Modèle de Clustering]
