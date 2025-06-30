@@ -1,6 +1,8 @@
-# 🚀 Projet MSPR AMAZING - EPSI 2025
+# 🚀 Projet MSPR AMAZING - Plateforme de Segmentation Client
 
 ---
+
+## 🌟 Aperçu du Projet
 
 Ce projet vise à concevoir, développer et industrialiser une solution d’Intelligence Artificielle permettant de **catégoriser les clients** d'une marketplace (Amazing) **en fonction de leur comportement d’achat et de navigation**.  
 Le tout est mis en place dans un environnement **conteneurisé**, surveillé, et connecté à un data lake.
@@ -13,13 +15,28 @@ Le projet inclut :
 -   📦 **Conteneurisation (Docker/Kubernetes)**
 -   📊 **Surveillance avec ELK + Grafana**
 -   ☁️ **Stockage S3-compatible avec MinIO**
--   🏢 **Intégration industrielle vers Redshift (Data Warehouse)**
+-   📈 **Dashboard interactif avec recommandations stratégiques**
 
 Il permet également de :
 
 -   Segmenter les clients selon leurs habitudes réelles (et non démographiques)
 -   Générer des insights marketing/actionnables
 -   Industrialiser la chaîne complète de traitement et de prédiction
+
+---
+
+## 🏗️ Architecture Technique
+
+````mermaid
+graph TD
+    A[Sources de données] --> B{Pipeline Spark}
+    B --> C[(MinIO)]
+    C --> D[Entraînement modèle]
+    D --> E[Modèle K-means]
+    E --> F[Dashboard Streamlit]
+    C --> F
+    B --> H[ELK]
+    D --> H
 
 ---
 
@@ -33,13 +50,11 @@ Voir le script `setup_project.sh` pour comprendre l'arborescence du projet.
 
 ```bash
 docker-compose up -d
-```
+````
 
 ---
 
 ## 📦 DEPENDENCIES
-
----
 
 ### Installation des dépendances Python
 
@@ -106,7 +121,7 @@ GF_PORT=3000
 ### 🧠 Modélisation IA
 
 -   Classification des utilisateurs selon leurs comportements en ligne
--   Algorithmes : K-NN, Decision Tree, SVM, Clustering
+-   Algorithmes : Clustering K-Means
 -   Réduction dimensionnelle (ACP) & sélection de variables
 -   Évaluation des modèles via métriques de clustering, validation croisée, visualisation
 
@@ -114,7 +129,7 @@ GF_PORT=3000
 
 -   Déploiement de l’algorithme dans un container Docker
 -   Traitement des futurs fichiers d’événements en autonomie via l’ETL
--   Stockage des résultats dans Redshift pour usage BI/Marketing
+-   Stockage des résultats dans S3 MINIO
 
 ### 📡 Monitoring
 
@@ -128,6 +143,14 @@ GF_PORT=3000
 -   Traitement sur base de données **anonymisées**
 -   Respect des règles RGPD dans la conception des pipelines et du modèle
 -   Pas de traitement de données sensibles ni d’identification directe des utilisateurs
+
+---
+
+## 📊 Dashboard Interactif
+
+-   Visualisation des clusters
+-   Prédiction en temps réel
+-   Recommandations marketing ciblées
 
 ---
 
