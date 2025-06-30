@@ -38,7 +38,6 @@ graph TD
     B --> H[ELK]
     D --> H
 
----
 
 ## 📁 Structure du projet
 
