@@ -23,8 +23,6 @@ Il permet également de :
 -   Générer des insights marketing/actionnables
 -   Industrialiser la chaîne complète de traitement et de prédiction
 
----
-
 ## 🏗️ Architecture Technique
 
 ````mermaid
