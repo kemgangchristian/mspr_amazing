@@ -1,0 +1,18 @@
+#######################################################
+############## EPSI (2025): MSPR AMAZING ##############
+##############         Version: 1.0        ############
+#######################################################
+
+apiVersion: 1
+
+datasources:
+    - name: Elasticsearch - Spark Logs
+      type: elasticsearch
+      access: proxy
+      url: http://elasticsearch:9200 # Modifie si besoin (ex: localhost, IP, etc)
+      isDefault: true
+      version: 7
+      editable: true
+      jsonData:
+          timeField: "@timestamp"
+      secureJsonData: {}

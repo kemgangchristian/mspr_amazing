@@ -18,6 +18,7 @@ data/processed/*
 data/raw/csv/*
 data/raw/parquet/*
 data/tmp/*
+demo/*
 logs/*
 minio/*
 #monitoring/elasticsearch/data/*

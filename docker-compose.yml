@@ -186,8 +186,10 @@ services:
         ports:
             - "${GF_PORT}:3000"
         volumes:
-            - ./monitoring/grafana/provisioning:/etc/grafana/provisioning
             - grafana_data:/var/lib/grafana
+            - ./grafana/dashboards:/etc/grafana/dashboards
+            - ./grafana/provisioning/dashboards:/etc/grafana/provisioning/dashboards
+            - ./grafana/provisioning/datasources:/etc/grafana/provisioning/datasources
         networks:
             - sparknet
 

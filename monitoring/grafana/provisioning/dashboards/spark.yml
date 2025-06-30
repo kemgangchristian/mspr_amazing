@@ -1,0 +1,15 @@
+#######################################################
+############## EPSI (2025): MSPR AMAZING ##############
+##############         Version: 1.0        ############
+#######################################################
+
+apiVersion: 1
+
+providers:
+    - name: "Spark Dashboards"
+      folder: "Spark Monitoring"
+      type: file
+      options:
+          path: /etc/grafana/dashboards
+          updateIntervalSeconds: 10
+          allowUiUpdates: true
